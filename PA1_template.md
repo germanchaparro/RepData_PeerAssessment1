@@ -1,14 +1,30 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 library(ggplot2)
 library(lubridate)
 
@@ -16,6 +32,13 @@ library(lubridate)
 activityInputFileName <- "activity.csv"
 
 print(paste("Reading file:", activityInputFileName, sep = " "))
+```
+
+```
+## [1] "Reading file: activity.csv"
+```
+
+```r
 if(!file.exists(activityInputFileName))
 {
   print(paste("Input file", activityInputFileName, "does not exist in working directory: ", getwd(), sep = " "))
@@ -30,7 +53,8 @@ inputData <- read.csv( activityInputFileName, header = TRUE,
 ```
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 point1 <-
   inputData %>%
   group_by(date) %>%
@@ -45,6 +69,8 @@ p1_1 <-
   geom_histogram( bins = 40, col = "black", fill = "steelblue" )
 print(p1_1)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)
 
 
 
