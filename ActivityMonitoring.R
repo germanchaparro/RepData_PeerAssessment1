@@ -3,6 +3,9 @@ library(dplyr)
 ## use library ggplot2 for ploting results 
 library(ggplot2)
 ## use library lubridate for managing date/times 
+library(lubridate)
+## use library chron for is.weekend function 
+library(chron)
 
 
 charMinutes_to_Time <- function(charMinutes)
@@ -55,28 +58,34 @@ point1 <-
   arrange(date)
 
 # Plot the histogram of the total number of steps taken each day
-#p1_1 <-
-#  ggplot ( data = point1, aes(totalSteps) ) +
-#  geom_histogram( bins = 40, col = "black", fill = "steelblue" )
-#print(p1_1)
+p1_1 <-
+  ggplot ( data = point1, aes(totalSteps) ) +
+  geom_histogram( bins = 40, col = "black", fill = "steelblue" ) +
+  labs(x = "Steps") +  
+  labs(y = "Frequency") +
+  labs(title = "Total number of steps per day") 
+print(p1_1)
 
 # Plot the the mean and median of the total number of steps taken per day
-#p1_2 <-
-#  ggplot( data = point1, aes(x = date) ) +
-#  geom_line(aes(y = dataMean), col="steelblue", na.rm = TRUE) + 
-#  geom_line(aes(y = dataMedian), col="red", na.rm = TRUE) + 
-#  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-#print(p1_2)
-
 p1_2 <-
+  ggplot( data = point1, aes(x = date, y = dataMean, group = 1) ) +
+  geom_line(col="steelblue") + 
+  geom_point() + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Day") +  
+  labs(y = "Mean of number of steps") +
+  labs(title = "Mean number of steps per day") 
+print(p1_2)
+
+p1_3 <-
   ggplot( data = inputData, aes(x = factor(date), y = steps)) +
   geom_boxplot() +
-  stat_summary(fun.data = mean(inputData$steps), col = "red") +
-#  geom_hline(aes(yintercept = mean(steps)), col = "red") +
   scale_y_log10() +
-  
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-print(p1_2)
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Day") +  
+  labs(y = "Median of number of steps") +
+  labs(title = "Median of number of steps per day") 
+print(p1_3)
  
 
 #g <-
@@ -107,7 +116,10 @@ avgDayActDF <-
 
 avgDayActPlot <- 
   ggplot ( data = avgDayActDF, aes(x = interval, y = dataMean) ) +
-  geom_line()
+  geom_line() +
+  labs(x = "Time interval") +  
+  labs(y = "Mean of number of steps") +
+  labs(title = "Mean of number of steps per time interval") 
 print(avgDayActPlot)
 
 avgMaxNumSteps <-
@@ -120,19 +132,23 @@ print(avgMaxNumSteps)
 ## Imputing missing values
 
 
+table(is.na(inputData$steps))
+
 ## Are there differences in activity patterns between weekdays and weekends?
 
 newInputData <-
   inputData %>%
   mutate(isWeekend = factor(is.weekend(ymd(date)), labels=c("WEEKDAY", "WEEKEND"))  ) %>%
-#  mutate(isWeekend = is.weekend(ymd(date) )) %>%
   group_by(interval, isWeekend) %>%
   summarize(meanSteps = mean(steps, na.rm = TRUE))
 
 weekdayPlot <-
   ggplot ( data = newInputData, aes(x = interval, y = meanSteps) ) +
   geom_line(col="steelblue") +
-  facet_grid(isWeekend ~ .)
+  facet_grid(isWeekend ~ .) +
+  labs(x = "Time interval") +  
+  labs(y = "Mean of number of steps") +
+  labs(title = "Comparisson of the mean of number of steps per time interval during weekends and weekdays") 
 print(weekdayPlot)
 
   
