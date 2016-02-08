@@ -131,9 +131,55 @@ print(avgMaxNumSteps)
 
 ## Imputing missing values
 
+print("Numer of rows with NA")
+table(is.na(inputData$steps))[2]
 
-table(is.na(inputData$steps))
+#calculate the mean of all data
+totalMean = mean(inputData$steps, na.rm = TRUE)
 
+notNAData <-
+  inputData %>%
+  mutate(steps = ifelse(is.na(steps), yes = totalMean, no = steps))
+
+point3 <-
+  notNAData %>%
+  group_by(date) %>%
+  summarize(totalSteps = sum(steps, na.rm = TRUE),
+            dataMean = mean(steps, na.rm = TRUE),
+            dataMedian = median(steps, na.rm = TRUE)) %>%
+  arrange(date)
+
+# Plot the histogram of the total number of steps taken each day
+p3_1 <-
+  ggplot ( data = point3, aes(totalSteps) ) +
+  geom_histogram( bins = 40, col = "black", fill = "steelblue" ) +
+  labs(x = "Steps") +  
+  labs(y = "Frequency") +
+  labs(title = "Total number of steps per day") 
+print(p3_1)
+
+# Plot the the mean and median of the total number of steps taken per day
+p3_2 <-
+  ggplot( data = point3, aes(x = date, y = dataMean, group = 1) ) +
+  geom_line(col="steelblue") + 
+  geom_point() + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Day") +  
+  labs(y = "Mean of number of steps") +
+  labs(title = "Mean number of steps per day") 
+print(p3_2)
+
+p3_3 <-
+  ggplot( data = notNAData, aes(x = factor(date), y = steps)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Day") +  
+  labs(y = "Median of number of steps") +
+  labs(title = "Median of number of steps per day") 
+print(p3_3)
+
+         
 ## Are there differences in activity patterns between weekdays and weekends?
 
 newInputData <-

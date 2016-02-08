@@ -172,11 +172,11 @@ print(avgMaxNumSteps)
 ## Imputing missing values
 
 ```r
-print("Numer of rows with NA")
+print("Number of rows with NA")
 ```
 
 ```
-## [1] "Numer of rows with NA"
+## [1] "Number of rows with NA"
 ```
 
 ```r
@@ -187,6 +187,108 @@ table(is.na(inputData$steps))[2]
 ## TRUE 
 ## 2304
 ```
+
+```r
+totalMean = mean(inputData$steps, na.rm = TRUE)
+
+print("Replacing NA values")
+```
+
+```
+## [1] "Replacing NA values"
+```
+
+```r
+notNAData <-
+  inputData %>%
+  mutate(steps = ifelse(is.na(steps), yes = totalMean, no = steps))
+
+print("Calculating sum, mean and median of new dataset")
+```
+
+```
+## [1] "Calculating sum, mean and median of new dataset"
+```
+
+```r
+point3 <-
+  notNAData %>%
+  group_by(date) %>%
+  summarize(totalSteps = sum(steps, na.rm = TRUE),
+            dataMean = mean(steps, na.rm = TRUE),
+            dataMedian = median(steps, na.rm = TRUE)) %>%
+  arrange(date)
+
+print("Ploting new histogram")
+```
+
+```
+## [1] "Ploting new histogram"
+```
+
+```r
+p3_1 <-
+  ggplot ( data = point3, aes(totalSteps) ) +
+  geom_histogram( bins = 40, col = "black", fill = "steelblue" ) +
+  labs(x = "Steps") +  
+  labs(y = "Frequency") +
+  labs(title = "Total number of steps per day") 
+print(p3_1)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)
+
+```r
+print("Ploting new mean")
+```
+
+```
+## [1] "Ploting new mean"
+```
+
+```r
+p3_2 <-
+  ggplot( data = point3, aes(x = date, y = dataMean, group = 1) ) +
+  geom_line(col="steelblue") + 
+  geom_point() + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Day") +  
+  labs(y = "Mean of number of steps") +
+  labs(title = "Mean number of steps per day") 
+print(p3_2)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-2.png)
+
+```r
+print("Ploting new median")
+```
+
+```
+## [1] "Ploting new median"
+```
+
+```r
+p3_3 <-
+  ggplot( data = notNAData, aes(x = factor(date), y = steps)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Day") +  
+  labs(y = "Median of number of steps") +
+  labs(title = "Median of number of steps per day") 
+print(p3_3)
+```
+
+```
+## Warning: Removed 11014 rows containing non-finite values (stat_boxplot).
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-3.png)
+
+
+* The histogram, the mean and median differ from previous plots.
+
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ```r
